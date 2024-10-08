@@ -1,0 +1,19 @@
+1. User Registration & Authencation (DONE)
+    A. Sign Up: Userdapat membuat akun dengan input username, email dan password
+    B. Login/Logout: User dapat melakukan log in dan log out dari sistem menggunakan email dan password secara aman
+
+2. DashBoard: (DONE)
+    A. Overview:  Ketika sudah login, user disambut dengan dashboard yang menampilkan overview dari to-do lists yang sudah dibuat
+
+3. To-Do List Management: (DONE)
+    A. Create New To-Do List: User dapat membuat beberapa to-do list, masing-masing dengan judul (e.g., “Work”, “Personal”, “Groceries”)
+    B. View: USer dapat meliha to-do Lists yang sudah dibuat
+    C. Delete: Delete with confirmation
+
+4. Task Searching and Filtering: (DONE)
+    A. Filter: User dapat melakukan filter untuk melihat hanya completed task/incomplete tasks/seluruh tasks.
+    B. Search: search bar dapat mempermudah user untuk secara cepat menemukan task dari seluruh lists.
+
+5. User Profile Management: (DONE)
+    A. View:  Userdapat melihat informasi profil termasuk username dan email
+    B. Edit:  Userdapat melakukan update terhadap username, email, atau password
