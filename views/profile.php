@@ -55,36 +55,68 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" />
+	<style>
+        body {
+            background-color: #1a1a1a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            max-width: 400px;
+            width: 100%;
+        }
+        .btn-primary {
+            background-color: #333;
+            border-color: #333;
+        }
+        .btn-primary:hover {
+            background-color: #444;
+            border-color: #444;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #333;
+            box-shadow: 0 0 0 0.25rem rgba(51, 51, 51, 0.25);
+        }
+		@media (max-width: 576px) {
+            .card {
+                margin: 10px;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+		
+    </style>
 </head>
-<body>
-    <div class="container mt-5">
-        <h1 class="text-center">Your Profile</h1>
+<body class="bg-light">
 
-        <!-- Profile Form -->
-        <form method="POST" action="profile.php">
-            <div class="form-group mb-3">
-                <label for="username">Username</label>
-                <input type="text" class="form-control" id="username" name="username" value="<?= htmlspecialchars(
-                	$user["username"]
-                ) ?>" required>
-            </div>
+  <div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-lg p-4" style="max-width: 500px; width: 100%;">
+      <h2 class="text-center mb-4">Your Profile</h2>
+      <form>
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" class="form-control" id="username" placeholder="Enter your username">
+        </div>
 
-            <div class="form-group mb-3">
-                <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" name="email" value="<?= htmlspecialchars(
-                	$user["email"]
-                ) ?>" required>
-            </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" class="form-control" id="email" placeholder="Enter your email">
+        </div>
 
-            <div class="form-group mb-3">
-                <label for="password">New Password (Leave empty to keep current password)</label>
-                <input type="password" class="form-control" id="password" name="password">
-            </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">New Password <small>(Leave empty to keep current password)</small></label>
+          <input type="password" class="form-control" id="password" placeholder="Leave empty to keep current password">
+        </div>
 
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-        </form>
+        <button type="submit" class="btn btn-primary w-100">Save Changes</button>
 
-        <a href="../index.php" class="btn btn-secondary mt-3">Back to Dashboard</a>
+        <a href="../index.php" class="btn btn-secondary w-100 mt-3">Back to Dashboard</a>
+      </form>
     </div>
+  </div>
 </body>
 </html>
