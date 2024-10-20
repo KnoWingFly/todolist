@@ -1,108 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login & Register</title>
-    <link
-      rel="stylesheet"
-      href="../node_modules/bootstrap/dist/css/bootstrap.min.css"
-    />
+    <title>Sign Up & Log In</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet" type="text/css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        .form-container {
-            max-width: 400px;
-            margin-top: 50px;
-        }
-        .nav-tabs {
+        body {
+            background-color: #1f2937;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
             justify-content: center;
         }
-        .form-header {
-            text-align: center;
-            margin-bottom: 20px;
+        .card {
+            width: 400px;
+            animation: fadeIn 0.5s ease-in-out;
         }
-        .form-footer {
-            text-align: center;
-            margin-top: 15px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .hidden {
+            display: none;
+        }
+        button[type="submit"] {
+            margin-top: 24px; 
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="form-container">
-            <!-- Tabs for switching between Login and Register -->
-            <ul class="nav nav-tabs" id="authTabs" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="login-tab" data-bs-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="register-tab" data-bs-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="false">Register</a>
-                </li>
-            </ul>
-<!-- tes 123 -->
-            <!-- Content for the tabs -->
-            <div class="tab-content" id="authTabContent">
-                <!-- Login Tab -->
-                <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-                    <h2 class="form-header">Login</h2>
-                    <form action="../actions/login_action.php" method="POST">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email address</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
-                    </form>
-                    <div class="form-footer">
-                        <p>Don't have an account? <a href="#register" id="switchToRegister">Register here</a></p>
-                    </div>
-                </div>
 
-                <!-- Register Tab -->
-                <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
-                    <h2 class="form-header">Register</h2>
-                    <form action="../actions/register_action.php" method="POST">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email address</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Register</button>
-                    </form>
-                    <div class="form-footer">
-                        <p>Already have an account? <a href="#login" id="switchToLogin">Login here</a></p>
+<div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+        <div class="tabs tabs-boxed">
+            <a class="tab tab-active" href="#signup">Sign Up</a>
+            <a class="tab" href="#login">Log In</a>
+        </div>
+
+        <div class="tab-content mt-6">
+            
+            <div id="signup" class="block">
+                <h2 class="card-title justify-center mb-4">Sign Up for Free</h2>
+                <form action="" method="post">
+                    <input type="hidden" name="action" value="signup">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Name</span>
+                        </label>
+                        <input type="text" name="name" required autocomplete="off" class="input input-bordered">
                     </div>
-                </div>
+                    <div class="form-control mt-4">
+                        <label class="label">
+                            <span class="label-text">Email Address</span>
+                        </label>
+                        <input type="email" name="email" required autocomplete="off" class="input input-bordered">
+                    </div>
+                    <div class="form-control mt-4">
+                        <label class="label">
+                            <span class="label-text">Set A Password</span>
+                        </label>
+                        <input type="password" name="password" required autocomplete="off" class="input input-bordered">
+                    </div>
+                    <div class="form-control mt-6">
+                        <button type="submit" class="btn btn-primary w-full">Get Started</button>
+                    </div>
+                </form>
+            </div>
+
+            
+            <div id="login" class="hidden">
+                <h2 class="card-title justify-center mb-4">Welcome Back!</h2>
+                <form action="" method="post">
+                    <input type="hidden" name="action" value="login">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Email Address</span>
+                        </label>
+                        <input type="email" name="email" required autocomplete="off" class="input input-bordered">
+                    </div>
+                    <div class="form-control mt-4">
+                        <label class="label">
+                            <span class="label-text">Password</span>
+                        </label>
+                        <input type="password" name="password" required autocomplete="off" class="input input-bordered">
+                    </div>
+                    <div class="form-control mt-6">
+                        <button type="submit" class="btn btn-primary w-full">Log In</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Bootstrap JS -->
-    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
-    <!-- Optional JS to automatically switch tabs based on links -->
-    <script>
-        // Switch tabs based on links in form-footer
-        document.getElementById('switchToRegister').addEventListener('click', function(e) {
-            e.preventDefault();
-            var registerTab = new bootstrap.Tab(document.getElementById('register-tab'));
-            registerTab.show();
-        });
+<input type="checkbox" id="error-modal" class="modal-toggle">
+<div class="modal">
+  <div class="modal-box relative">
+    <label for="error-modal" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+    <h3 class="text-lg font-bold">Error</h3>
+    <p class="py-4">An error occurred. Please try again.</p>
+  </div>
+</div>
 
-        document.getElementById('switchToLogin').addEventListener('click', function(e) {
-            e.preventDefault();
-            var loginTab = new bootstrap.Tab(document.getElementById('login-tab'));
-            loginTab.show();
-        });
-    </script>
+<script>
+$(document).ready(function() {
+    $('.tabs a').on('click', function(e) {
+        e.preventDefault();
+
+        var target = $(this).attr('href');
+
+       
+        $('.tab-content > div').addClass('hidden');
+        $(target).removeClass('hidden');
+
+        
+        $(this).addClass('tab-active').siblings().removeClass('tab-active');
+    });
+});
+</script>
+
 </body>
 </html>
