@@ -3,8 +3,8 @@ session_start();
 require "../config/db.php";
 
 if (!isset($_SESSION["user_id"])) {
-	header("Location: views/login.php");
-	exit();
+    header("Location: views/login.php");
+    exit();
 }
 
 $user_id = $_SESSION["user_id"];
@@ -15,43 +15,48 @@ $stmt->execute(["user_id" => $user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-	$username = $_POST["username"];
-	$email = $_POST["email"];
-	$password = !empty($_POST["password"])
-		? password_hash($_POST["password"], PASSWORD_DEFAULT)
-		: null;
+    $username = $_POST["username"];
+    $email = $_POST["email"];
+    $new_password = $_POST["password"];
 
-	// Update user information
-	if ($password) {
-		$stmt = $pdo->prepare(
-			"UPDATE users SET username = :username, email = :email, password = :password WHERE id = :user_id"
-		);
-		$stmt->execute([
-			"username" => $username,
-			"email" => $email,
-			"password" => $password,
-			"user_id" => $user_id,
-		]);
-	} else {
-		$stmt = $pdo->prepare(
-			"UPDATE users SET username = :username, email = :email WHERE id = :user_id"
-		);
-		$stmt->execute([
-			"username" => $username,
-			"email" => $email,
-			"user_id" => $user_id,
-		]);
-	}
+    // Update user information
+    if (!empty($new_password)) {
+        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+        $stmt = $pdo->prepare(
+            "UPDATE users SET username = :username, email = :email, password = :password WHERE id = :user_id"
+        );
+        $stmt->execute([
+            "username" => $username,
+            "email" => $email,
+            "password" => $hashed_password,
+            "user_id" => $user_id,
+        ]);
+    } else {
+        $stmt = $pdo->prepare(
+            "UPDATE users SET username = :username, email = :email WHERE id = :user_id"
+        );
+        $stmt->execute([
+            "username" => $username,
+            "email" => $email,
+            "user_id" => $user_id,
+        ]);
+    }
 
-	header("Location: profile.php");
-	exit();
+    // Refresh user data after update
+    $stmt = $pdo->prepare("SELECT username, email FROM users WHERE id = :user_id");
+    $stmt->execute(["user_id" => $user_id]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Set a success message
+    $_SESSION['profile_updated'] = true;
 }
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" />
@@ -79,44 +84,73 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             border-color: #333;
             box-shadow: 0 0 0 0.25rem rgba(51, 51, 51, 0.25);
         }
-		@media (max-width: 576px) {
-            .card {
-                margin: 10px;
+		@media (max-width: 320px) {
+            body {
+                padding: 10px;
+            }
+            .card-body {
+                padding: 15px;
             }
             h2 {
-                font-size: 1.5rem;
+                font-size: 1.3rem;
+            }
+            .form-label {
+                font-size: 0.9rem;
             }
         }
-
-		
+        @media (min-width: 768px) {
+            .card {
+                transform: scale(1);
+                transition: transform 0.3s ease;
+            }
+            .card:hover {
+                transform: scale(1.02);
+            }
+        }
     </style>
+
 </head>
 <body class="bg-light">
 
   <div class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="card shadow-lg p-4" style="max-width: 500px; width: 100%;">
       <h2 class="text-center mb-4">Your Profile</h2>
-      <form>
+      <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <div class="mb-3">
           <label for="username" class="form-label">Username</label>
-          <input type="text" class="form-control" id="username" placeholder="Enter your username">
+          <input type="text" class="form-control" id="username" name="username" value="<?= htmlspecialchars($user["username"]) ?>" required>
         </div>
 
         <div class="mb-3">
           <label for="email" class="form-label">Email</label>
-          <input type="email" class="form-control" id="email" placeholder="Enter your email">
+          <input type="email" class="form-control" id="email" name="email" value="<?= htmlspecialchars($user["email"]) ?>" required>
         </div>
 
         <div class="mb-3">
           <label for="password" class="form-label">New Password <small>(Leave empty to keep current password)</small></label>
-          <input type="password" class="form-control" id="password" placeholder="Leave empty to keep current password">
+          <input type="password" class="form-control" id="password" name="password">
         </div>
-
+        
         <button type="submit" class="btn btn-primary w-100">Save Changes</button>
 
         <a href="../index.php" class="btn btn-secondary w-100 mt-3">Back to Dashboard</a>
       </form>
     </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+  <script>
+    <?php if (isset($_SESSION['profile_updated']) && $_SESSION['profile_updated']): ?>
+    Swal.fire({
+      icon: 'success',
+      title: 'Success!',
+      text: 'Your profile has been updated successfully.',
+      confirmButtonColor: '#333'
+    });
+    <?php
+    // Clear the session variable
+    unset($_SESSION['profile_updated']);
+    endif; ?>
+  </script>
 </body>
 </html>
