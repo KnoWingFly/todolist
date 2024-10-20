@@ -63,11 +63,20 @@ if (!empty($tasks)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User-Specific To-Do List</title>
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <style>
         body {
-            background-color: #2c3e50;
+            min-height: 100vh;
+            background-color: rgb(15, 23, 42);
             color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-family: system-ui;
         }
+        
         h1, h3 {
             color: white;
         }
@@ -112,6 +121,122 @@ if (!empty($tasks)) {
         .logout-btn {
             margin-top: 20px;
         }
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* reset button */
+button {
+    appearance: none;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    text-decoration: none;
+    text-transform: none;
+    line-height: normal;
+    overflow: visible;
+}
+
+body {
+    min-height: 100svh;
+    background-color: rgb(15, 23, 42);
+    color: white;
+    display: grid;
+    place-content: center;
+    font-size: 1rem;
+    font-family: system-ui;
+}
+
+nav {
+    --_clr-txt: rgb(255, 255, 255);
+    --_clr-txt-svg: rgb(147, 158, 184);
+    --_ani-speed: 6s; /* speed of rotating text */
+    display: flex;
+    gap: 1rem;
+    font-size: 1.4rem;
+}
+
+nav > button {
+    position: relative;
+    display: grid;
+    place-content: center;
+    grid-template-areas: 'stack';
+    padding: 0 1.5rem;
+    text-transform: uppercase;
+    font-weight: 300;
+}
+
+/* place button items on top of each other */
+nav > button > span {
+    transition: all 300ms ease-in-out;
+    grid-area: stack;
+}
+
+/* nav icon */
+nav > button > span:last-of-type {
+    margin-top: 0.25rem;
+    transform: scale(0);
+    transition-delay: 0ms;
+    border-radius: 50%;
+}
+
+/* hover - hide text */
+nav > button:focus-visible > span:first-of-type,
+nav > button:hover > span:first-of-type {
+    transform: scale(0);
+}
+
+/* hover - reveal icon */
+nav > button:focus-visible > span:last-of-type,
+nav > button:hover > span:last-of-type {
+    transform: scale(1);
+}
+
+/* nav SVG circular text */
+nav > button > svg {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transform-origin: center;
+    opacity: 0;
+    text-transform: uppercase;
+    transition: all 300ms ease-in-out;
+    color: var(--_clr-txt-svg);
+}
+
+/* hover - reveal rotating SVG */
+nav > button:focus-visible > svg,
+nav > button:hover > svg {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    transition-delay: 150ms;
+}
+
+/* rotating SVG text */
+button svg g {
+    transform-origin: center;
+    animation: rotate var(--_ani-speed) linear infinite;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 
     </style>
 </head>
@@ -120,11 +245,46 @@ if (!empty($tasks)) {
     <div class="container mt-5">
         <h1 class="text-center">Welcome to Your To-Do List</h1>
 
-        <!-- Profile and Logout Buttons -->
-        <div class="text-end">
-            <a href="../views/profile.php" class="btn btn-secondary">Profile</a>
-            <a href="logout.php" class="btn btn-secondary logout-btn">Log Out</a>
-        </div>
+        <nav class="d-flex justify-content-center">
+        <button type="button" class="nav-button btn btn-transparent" title="Profile">
+            <span>Profile</span>
+            <span class="material-symbols-outlined" aria-hidden="true"></span>
+            <svg viewBox="0 0 300 300" aria-hidden="true">
+                <g>
+                    <text fill="currentColor">
+                        <textPath xlink:href="#circlePath">Profile</textPath>
+                    </text>
+                    <text fill="currentColor">
+                        <textPath xlink:href="#circlePath" startOffset="50%">Profile</textPath>
+                    </text>
+                </g>
+            </svg>
+        </button>
+        <button type="button" class="nav-button btn btn-transparent" title="Log Out">
+            <span>Log Out</span>
+            <span class="material-symbols-outlined" aria-hidden="true"></span>
+            <svg viewBox="0 0 300 300" aria-hidden="true">
+                <g>
+                    <text fill="currentColor">
+                        <textPath xlink:href="#circlePath">Log Out</textPath>
+                    </text>
+                    <text fill="currentColor">
+                        <textPath xlink:href="#circlePath" startOffset="50%">Log Out</textPath>
+                    </text>
+                </g>
+            </svg>
+        </button>
+    </nav>
+
+    <!-- SVG template with dynamic text -->
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 300" width="0" height="0">
+        <defs>
+            <path id="circlePath" d="M 150, 150 m -50, 0 a 50,50 0 0,1 100,0 a 50,50 0 0,1 -100,0" />
+        </defs>
+    </svg>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
         <!-- Task Search and Filter Section -->
         <div class="row filter-container mb-4">
