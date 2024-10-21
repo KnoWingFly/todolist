@@ -65,6 +65,7 @@ if (!empty($tasks)) {
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
             min-height: 100vh;
@@ -141,26 +142,25 @@ if (!empty($tasks)) {
         }
 
         .main-content {
-            flex-grow: 1;
-            margin-left: 60px;
-            padding: 20px;
-            transition: margin-left 0.3s ease;
-        }
+        flex-grow: 1;
+        margin-left: 60px;
+        padding: 20px;
+        transition: margin-left 0.3s ease;
+    }
 
         .sidebar:hover ~ .main-content {
             margin-left: 250px;
         }
 
         .task-container {
-            min-height: 300px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 20px;
+        min-height: auto;
+    }
 
         .task {
-            padding: 10px;
+            padding: 20px 10px 10px; 
             margin: 5px 0;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -169,15 +169,72 @@ if (!empty($tasks)) {
             color: black;
         }
 
-        .task-content {
-            margin-bottom: 30px; /* Space for buttons */
-        }
+        
 
+        .task-item {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-left: 4px solid;
+        border-radius: 4px;
+        padding: 5px;
+        margin-bottom: 10px;
+        position: relative;
+        cursor: default;
+        color:#bfbcbb;
+         }
         .task-btns {
             position: absolute;
-            bottom: 5px;
-            right: 5px;
+        bottom: 5px;
+        right: 5px;
+        display: flex;
+        justify-content: flex-end;
         }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            color: red;
+            padding: 5px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        .btn-icon1 {
+            background: none;
+            border: none;
+            color: green;
+            padding: 5px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        .btn-icon:hover {
+            opacity: 0.8;
+        }
+
+        .edit-btn, .delete-btn {
+            width: auto;
+            height: auto;
+            padding: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            margin-left: 10px;
+            background-color: transparent;
+        }
+
+        h3 {
+            color: white;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .modal-body{
+        color:white;
+         }
 
         @media (max-width: 576px) {
             .task {
@@ -202,71 +259,84 @@ if (!empty($tasks)) {
                 margin: 0 2px;
             }
         }
-        
+
         .task-columns {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
         }
 
         .task-column {
             flex: 1;
             min-width: 0;
         }
-
-        @media (min-width: 768px) {
-            .task-columns {
-                flex-direction: row;
-            }
+        @media (max-width: 768px) {
+        .task-columns {
+            flex-direction: column;
         }
 
-        .filter-container {
+        .task-column {
+            width: 100%;
             margin-bottom: 20px;
         }
 
-        .btn-danger {
-            margin-left: 5px;
+        .sidebar {
+            width: 100%;
+            height: auto;
+        }
+
+        .main-content {
+            margin-left: 0;
+        }
+    }
+        .btn-icon, .btn-icon1 {
+        font-size: 1.2rem; /* Memperbesar ukuran ikon */
+        padding: 8px; /* Menambah padding untuk area klik yang lebih besar */
+        }
+        @media (max-width: 767px) {
+        .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        }
+
+        .sidebar:hover {
+        width: 100%;
+        }
+
+        .main-content {
+         margin-left: 0;
+        }
+
+        body {
+        flex-direction: column;
+        }
+
+        .sidebar-content {
+        opacity: 1;
+        }
+
+        .sidebar-item span {
+        opacity: 1;
+        transform: translateX(0);
+        }
+        }
+
+        @media (max-width: 576px) {
+        .task-item {
+        padding-bottom: 50px;
         }
 
         .task-btns {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
+        left: 5px;
+        right: 5px;
+        justify-content: flex-end;
         }
 
-        .modal-content {
-            background-color: #f8f9fa;
-            color: black;
+        .btn-icon, .btn-icon1 {
+        margin-bottom: 5px;
         }
-
-        @media (max-width: 767px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-
-            .sidebar:hover {
-                width: 100%;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            body {
-                flex-direction: column;
-            }
-
-            .sidebar-content {
-                opacity: 1;
-            }
-
-            .sidebar-item span {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
+    }
     </style>
 </head>
 <body>
@@ -307,12 +377,16 @@ if (!empty($tasks)) {
             <?php if (!empty($pendingTasks)): ?>
                         <?php foreach ($pendingTasks as $task): ?>
                             <div class="task task-item" id="task-<?= $task["id"] ?>" draggable="true" ondragstart="drag(event)" 
-                                style="background-color: <?= htmlspecialchars($task["card_color"] ?? "#ffffff") ?>;" data-status="<?= $task["status"] ?>">
+                                style="border-left-color: <?= htmlspecialchars($task["card_color"] ?? "#ffffff") ?>;" data-status="<?= $task["status"] ?>">
                                 <strong><?= htmlspecialchars($task["title"]) ?></strong><br>
                                 Due: <?= htmlspecialchars($task["due_date"]) ?>
-                                <div class="task-btns">
-                                    <button class="btn btn-sm btn-warning" onclick="editTask(<?= $task["id"] ?>)">Edit</button>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteTask(<?= $task["id"] ?>)">Delete</button>
+                                 <div class="task-btns">
+                                    <button class="btn btn-sm btn-icon1 edit-btn" onclick="editTask(<?= $task['id'] ?>)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-icon delete-btn" onclick="deleteTask(<?= $task['id'] ?>)">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -329,12 +403,16 @@ if (!empty($tasks)) {
             <?php if (!empty($inProgressTasks)): ?>
                         <?php foreach ($inProgressTasks as $task): ?>
                             <div class="task task-item" id="task-<?= $task["id"] ?>" draggable="true" ondragstart="drag(event)" 
-                                style="background-color: <?= htmlspecialchars($task["card_color"] ?? "#ffffff") ?>;" data-status="<?= $task["status"] ?>">
+                                style="border-left-color: <?= htmlspecialchars($task["card_color"] ?? "#ffffff") ?>;" data-status="<?= $task["status"] ?>">
                                 <strong><?= htmlspecialchars($task["title"]) ?></strong><br>
                                 Due: <?= htmlspecialchars($task["due_date"]) ?>
                                 <div class="task-btns">
-                                    <button class="btn btn-sm btn-warning" onclick="editTask(<?= $task["id"] ?>)">Edit</button>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteTask(<?= $task["id"] ?>)">Delete</button>
+                                    <button class="btn btn-sm btn-icon1 edit-btn" onclick="editTask(<?= $task['id'] ?>)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-icon delete-btn" onclick="deleteTask(<?= $task['id'] ?>)">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -350,12 +428,16 @@ if (!empty($tasks)) {
             <?php if (!empty($completedTasks)): ?>
                         <?php foreach ($completedTasks as $task): ?>
                             <div class="task task-item" id="task-<?= $task["id"] ?>" draggable="true" ondragstart="drag(event)" 
-                                style="background-color: <?= htmlspecialchars($task["card_color"] ?? "#ffffff") ?>;" data-status="<?= $task["status"] ?>">
+                                style="border-left-color: <?= htmlspecialchars($task["card_color"] ?? "#ffffff") ?>;" data-status="<?= $task["status"] ?>">
                                 <strong><?= htmlspecialchars($task["title"]) ?></strong><br>
                                 Due: <?= htmlspecialchars($task["due_date"]) ?>
                                 <div class="task-btns">
-                                    <button class="btn btn-sm btn-warning" onclick="editTask(<?= $task["id"] ?>)">Edit</button>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteTask(<?= $task["id"] ?>)">Delete</button>
+                                    <button class="btn btn-sm btn-icon1 edit-btn" onclick="editTask(<?= $task['id'] ?>)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-icon delete-btn" onclick="deleteTask(<?= $task['id'] ?>)">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -452,6 +534,49 @@ if (!empty($tasks)) {
             task.style.display = (selectedStatus === '' || taskStatus === selectedStatus) ? 'block' : 'none';
         });
     }
+
+     // View task details
+     function viewTaskDetails(taskId) {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", `actions/get_task_details.php?task_id=${taskId}`, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.getElementById('taskDetailsContent').innerHTML = xhr.responseText;
+
+                    // Set up edit and delete buttons in modal
+                    document.getElementById('editModalBtn').onclick = function() {
+                        editTask(taskId);
+                    };
+                    document.getElementById('deleteModalBtn').onclick = function() {
+                        deleteTask(taskId);
+                    };
+
+                    const modal = new bootstrap.Modal(document.getElementById('taskDetailsModal'));
+                    modal.show();
+                }
+            };
+            xhr.send();
+        }
+
+        // Edit task
+        function editTask(taskId) {
+            window.location.href = `edit_task.php?task_id=${taskId}`;
+        }
+
+        // Delete task
+        function deleteTask(taskId) {
+            if (confirm("Are you sure you want to delete this task?")) {
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "actions/delete_task.php", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        window.location.reload();
+                    }
+                };
+                xhr.send(`task_id=${taskId}`);
+            }
+        }
 </script>
 </body>
 </html>
