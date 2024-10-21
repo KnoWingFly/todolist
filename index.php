@@ -162,7 +162,7 @@ if (!empty($tasks)) {
         .task {
             padding: 20px 10px 10px; 
             margin: 5px 0;
-            border: 1px solid #ddd;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 4px;
             cursor: pointer;
             position: relative;
@@ -182,7 +182,7 @@ if (!empty($tasks)) {
         color:#bfbcbb;
          }
         .task-btns {
-            position: absolute;
+        position: absolute;
         bottom: 5px;
         right: 5px;
         display: flex;
@@ -270,7 +270,7 @@ if (!empty($tasks)) {
             flex: 1;
             min-width: 0;
         }
-        @media (max-width: 768px) {
+        @media (max-width: 1080px) {
         .task-columns {
             flex-direction: column;
         }
@@ -283,60 +283,171 @@ if (!empty($tasks)) {
         .sidebar {
             width: 100%;
             height: auto;
+            justify-content: flex-end; /* Changed to flex-end to align with right side */
+        }
+        .sidebar:hover ~ .main-content {
+            margin-left: 0px;
         }
 
         .main-content {
             margin-left: 0;
         }
+        
     }
         .btn-icon, .btn-icon1 {
         font-size: 1.2rem; /* Memperbesar ukuran ikon */
         padding: 8px; /* Menambah padding untuk area klik yang lebih besar */
         }
-        @media (max-width: 767px) {
-        .sidebar {
+        @media (max-width: 1080px) {
+    .sidebar {
         width: 100%;
         height: auto;
         position: relative;
-        }
-
-        .sidebar:hover {
-        width: 100%;
-        }
-
-        .main-content {
-         margin-left: 0;
-        }
-
-        body {
+        padding: 1rem;
+        background-color: rgb(30, 41, 59);
+        display: flex;
         flex-direction: column;
-        }
-
-        .sidebar-content {
-        opacity: 1;
-        }
-
-        .sidebar-item span {
-        opacity: 1;
-        transform: translateX(0);
-        }
-        }
-
-        @media (max-width: 576px) {
-        .task-item {
-        padding-bottom: 50px;
-        }
-
-        .task-btns {
-        left: 5px;
-        right: 5px;
-        justify-content: flex-end;
-        }
-
-        .btn-icon, .btn-icon1 {
-        margin-bottom: 5px;
-        }
+        align-items: center;
     }
+    
+    .sidebar:hover {
+        width: 100%;
+        box-shadow: none;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1rem;
+    }
+    
+    body {
+        flex-direction: column;
+        overflow-x: hidden;
+    }
+    
+    .sidebar-content {
+        opacity: 1;
+        visibility: visible;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0;
+    }
+    
+    .sidebar-top {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    /* Style for the menu title */
+    .sidebar-top h3 {
+        width: 100%;
+        text-align: center;
+        margin: 0;
+        padding: 0.75rem;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+    }
+    
+    /* Individual menu items */
+    .sidebar-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem;
+        margin: 0;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+    
+    .sidebar-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar-item i {
+        margin-right: 0.75rem;
+    }
+    
+    .sidebar-item span {
+        opacity: 1;
+        transform: none;
+        display: inline;
+        margin: 0;
+        flex: 0 0 auto;
+        min-width: 80px; /* Ensure consistent text width */
+        text-align: left;
+    }
+    
+    .sidebar-bottom {
+        width: 100%;
+        margin-top: 0.75rem;
+        display: flex;
+        justify-content: center;
+    }
+}
+
+/* Mobile devices */
+@media (max-width: 576px) {
+    .sidebar {
+        padding: 0.75rem;
+    }
+
+    .sidebar-item {
+        padding: 1rem;
+        margin: 0.25rem 0;
+    }
+    
+    .sidebar-item i {
+        font-size: 1.5rem;
+    }
+
+    /* Task items */
+    .task-item {
+        padding: 1rem;
+        padding-bottom: 60px;
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+    /* Task buttons container */
+    .task-btns {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 0.5rem;
+        background-color: rgba(255, 255, 255, 0.95);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    /* Button styles */
+    .btn-icon,
+    .btn-icon1 {
+        padding: 0.5rem;
+        margin: 0;
+        flex: 0 0 auto;
+    }
+
+    /* Add touch-friendly sizing */
+    .btn-icon,
+    .btn-icon1,
+    .sidebar-item {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
     </style>
 </head>
 <body>
@@ -356,12 +467,12 @@ if (!empty($tasks)) {
 <div class="main-content">
     <h1 class="text-center mb-4">Welcome to Your To-Do List</h1>
 
-    <div class="row filter-container mb-4">
-        <div class="col-md-6">
+    <div class="row filter-container mb-2">
+        <div class="col-md-6 p-2">
             <input type="text" id="taskSearch" class="form-control" placeholder="Search tasks..." onkeyup="searchTasks()">
         </div>
-        <div class="col-md-6 text-end">
-            <select id="statusFilter" class="form-select w-50 d-inline-block" onchange="filterTasks()">
+        <div class="col-md-6 text-end p-2">
+            <select id="statusFilter" class="form-select" onchange="filterTasks()">
                 <option value="">All Tasks</option>
                 <option value="pending">Pending</option>
                 <option value="in_progress">In Progress</option>
