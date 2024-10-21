@@ -233,7 +233,7 @@ if (!empty($tasks)) {
         }
 
         .modal-body{
-        color:white;
+        color:black;
          }
 
         @media (max-width: 576px) {
