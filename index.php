@@ -66,7 +66,14 @@ if (!empty($tasks)) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr@1.8.1/dist/themes/classic.min.css" />
     <style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
         body {
             min-height: 100vh;
             background-color: rgb(15, 23, 42);
@@ -146,7 +153,7 @@ if (!empty($tasks)) {
         margin-left: 60px;
         padding: 20px;
         transition: margin-left 0.3s ease;
-    }
+        }
 
         .sidebar:hover ~ .main-content {
             margin-left: 250px;
@@ -157,7 +164,7 @@ if (!empty($tasks)) {
         border-radius: 8px;
         padding: 20px;
         min-height: auto;
-    }
+        }
 
         .task {
             padding: 20px 10px 10px; 
@@ -169,7 +176,109 @@ if (!empty($tasks)) {
             color: black;
         }
 
-        
+        .modal-content {
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .modal-header {
+            border-bottom: none;
+        }
+
+        .modal-title {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        /* Form Styles */
+        .form-label {
+            color: #ffffff;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .form-control, .form-select {
+            background-color: #3a3a3a;
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            padding: 10px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #3a3a3a;
+            box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.5);
+        }
+
+        /* Date and Time Inputs */
+        input[type="date"], input[type="time"] {
+            color-scheme: dark;
+        }
+
+        /* File Upload Button */
+        .btn-file {
+            background-color: #3a3a3a;
+            color: #ffffff;
+            border: 1px solid #4a4a4a;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-file:hover {
+            background-color: #4a4a4a;
+        }
+
+        /* Submit Button */
+        .btn-primary {
+            background-color: #7289da;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #5a6ebd;
+        }
+
+        /* Custom Styles for Specific Elements */
+        #eventStatus {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 30px;
+        }
+
+        #uploadBanner {
+            display: none;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-upload-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+        }
+
+        .file-upload-wrapper .btn-file {
+            display: inline-block;
+        }
+
+        .btn-close{
+           background-color:#ffffff;
+            color: #ffffff;
+        }
 
         .task-item {
         background-color: rgba(255, 255, 255, 0.05);
@@ -181,6 +290,7 @@ if (!empty($tasks)) {
         cursor: default;
         color:#bfbcbb;
          }
+
         .task-btns {
         position: absolute;
         bottom: 5px;
@@ -231,6 +341,8 @@ if (!empty($tasks)) {
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 4px;
         }
+        
+        
 
         .modal-body{
         color:black;
@@ -448,6 +560,72 @@ if (!empty($tasks)) {
         min-width: 44px;
     }
 }
+
+    .filter-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .col-md-6 {
+        flex: 1;
+    }
+
+    #taskSearch, #statusFilter {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid #444;
+        border-radius: 5px;
+        background-color: white;
+        color: black;
+        font-size: 16px;
+    }
+
+    #taskSearch::placeholder {
+        color: #666;
+    }
+
+    #statusFilter {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23000000' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        padding-right: 30px;
+    }
+
+    #statusFilter option {
+        background-color: white;
+        color: black;
+    }
+
+    @media (max-width: 768px) {
+        .filter-container {
+            flex-direction: column;
+        }
+    }
+
+    .color-picker {
+    margin-bottom: 20px;
+}
+
+.pickr {
+    width: 100%;
+}
+
+.pickr button {
+    width: 100%;
+    border-radius: 8px;
+    height: 40px;
+    border: 2px solid #e0e0e0;
+}
+
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+}
     </style>
 </head>
 <body>
@@ -469,10 +647,10 @@ if (!empty($tasks)) {
 
     <div class="row filter-container mb-2">
         <div class="col-md-6 p-2">
-            <input type="text" id="taskSearch" class="form-control" placeholder="Search tasks..." onkeyup="searchTasks()">
+            <input type="text" id="taskSearch" class="form-controls" placeholder="Search tasks..." onkeyup="searchTasks()">
         </div>
         <div class="col-md-6 text-end p-2">
-            <select id="statusFilter" class="form-select" onchange="filterTasks()">
+            <select id="statusFilter" class="form-selects" onchange="filterTasks()">
                 <option value="">All Tasks</option>
                 <option value="pending">Pending</option>
                 <option value="in_progress">In Progress</option>
@@ -578,9 +756,10 @@ if (!empty($tasks)) {
                             <label for="dueDate" class="form-label">Due Date</label>
                             <input type="date" class="form-control" id="dueDate" name="dueDate" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="taskColor" class="form-label">Card Color</label>
-                            <input type="color" class="form-control" id="taskColor" name="card_color" value="#ffffff">
+                        <div class="mb-3 color-picker">
+                        <label for="taskCardColor" class="form-label">Card Color</label>
+                        <div id="taskCardColor"></div>
+                        <input type="hidden" id="colorValue" name="card_color">
                         </div>
                         <div class="mb-3">
                             <label for="taskStatus" class="form-label">Task Status</label>
@@ -597,7 +776,7 @@ if (!empty($tasks)) {
         </div>
     </div>
 
-
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr@1.8.1/dist/pickr.min.js"></script>
 <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     function allowDrop(event) {
@@ -688,6 +867,31 @@ if (!empty($tasks)) {
                 xhr.send(`task_id=${taskId}`);
             }
         }
+
+        const pickr = Pickr.create({
+            el: '#taskCardColor',
+            theme: 'classic',
+
+            default: '<?= htmlspecialchars($task["card_color"] ?? "#ffffff") ?>',
+
+            components: {
+                preview: true,
+                opacity: true,
+                hue: true,
+
+                interaction: {
+                    hex: true,
+                    rgba: true,
+                    input: true,
+                    save: true
+                }
+            }
+        });
+
+        pickr.on('change', (color) => {
+            const hexColor = color.toHEXA().toString();
+            document.getElementById('colorValue').value = hexColor;
+        });
 </script>
 </body>
 </html>

@@ -70,7 +70,7 @@ body {
 }
 
 .contact-container {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: #2a2a2a;
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.2);
@@ -111,8 +111,8 @@ body {
     width: 100%;
     border: 2px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
-    background-color: #ffffff;
-    color: #333;
+    background-color: #3a3a3a;
+    color: white;
 }
 
 .form-control:focus {
@@ -123,7 +123,7 @@ body {
 }
 
 .btn-submit {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: #7289da;
     border: none;
     padding: 12px 24px;
     color: white;
@@ -137,7 +137,7 @@ body {
 }
 
 .btn-submit:hover {
-    background-color: #1a1a1a;
+    background-color:  #5a6ebd;
 }
 
 .btn-secondary {
@@ -260,7 +260,7 @@ select.form-control {
 
 input[type="date"] {
     position: relative;
-    background-color: #f8f8f8;
+    background-color: #3a3a3a;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
