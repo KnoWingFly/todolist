@@ -4,27 +4,27 @@ session_start();
 require "config/db.php";
 
 if (!isset($_SESSION["user_id"])) {
-	header("Location: views/login.php");
-	exit();
+    header("Location: views/login.php");
+    exit();
 }
 
 $user_id = $_SESSION["user_id"];
 
 // Fetch all lists for the logged-in user
 $listsStmt = $pdo->prepare(
-	"SELECT id, title FROM todo_lists WHERE user_id = :user_id"
+    "SELECT id, title FROM todo_lists WHERE user_id = :user_id"
 );
 $listsStmt->execute(["user_id" => $user_id]);
 $lists = $listsStmt->fetchAll(PDO::FETCH_ASSOC);
 
 // If user has no lists, create a default one
 if (empty($lists)) {
-	$defaultListStmt = $pdo->prepare(
-		"INSERT INTO todo_lists (user_id, title) VALUES (:user_id, 'Default List')"
-	);
-	$defaultListStmt->execute(["user_id" => $user_id]);
-	$defaultListId = $pdo->lastInsertId();
-	$lists[] = ["id" => $defaultListId, "title" => "Default List"];
+    $defaultListStmt = $pdo->prepare(
+        "INSERT INTO todo_lists (user_id, title) VALUES (:user_id, 'Default List')"
+    );
+    $defaultListStmt->execute(["user_id" => $user_id]);
+    $defaultListId = $pdo->lastInsertId();
+    $lists[] = ["id" => $defaultListId, "title" => "Default List"];
 }
 
 // Fetch tasks for the first list (default list for user)
@@ -44,15 +44,15 @@ $inProgressTasks = [];
 $completedTasks = [];
 
 if (!empty($tasks)) {
-	$pendingTasks = array_filter($tasks, function ($task) {
-		return $task["status"] === "pending";
-	});
-	$inProgressTasks = array_filter($tasks, function ($task) {
-		return $task["status"] === "in_progress";
-	});
-	$completedTasks = array_filter($tasks, function ($task) {
-		return $task["status"] === "completed";
-	});
+    $pendingTasks = array_filter($tasks, function ($task) {
+        return $task["status"] === "pending";
+    });
+    $inProgressTasks = array_filter($tasks, function ($task) {
+        return $task["status"] === "in_progress";
+    });
+    $completedTasks = array_filter($tasks, function ($task) {
+        return $task["status"] === "completed";
+    });
 }
 ?>
 
@@ -70,16 +70,87 @@ if (!empty($tasks)) {
             min-height: 100vh;
             background-color: rgb(15, 23, 42);
             color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             font-size: 1rem;
             font-family: system-ui;
+            display: flex;
         }
-        
+
         h1, h3 {
             color: white;
         }
+
+        .sidebar {
+            width: 60px;
+            background-color: rgb(30, 41, 59);
+            transition: width 0.3s ease;
+            overflow: hidden;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+        }
+
+        .sidebar:hover {
+            width: 250px;
+        }
+
+        .sidebar-content {
+            flex-grow: 1;
+            width: 250px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding-top: 20px;
+        }
+
+        .sidebar:hover .sidebar-content {
+            opacity: 1;
+        }
+
+        .sidebar-item {
+            padding: 10px 15px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-item i {
+            margin-right: 15px;
+            font-size: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-item span {
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .sidebar:hover .sidebar-item span {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .sidebar-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            margin-left: 60px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar:hover ~ .main-content {
+            margin-left: 250px;
+        }
+
         .task-container {
             min-height: 300px;
             padding: 10px;
@@ -98,6 +169,57 @@ if (!empty($tasks)) {
             color: black;
         }
 
+        .task-content {
+            margin-bottom: 30px; /* Space for buttons */
+        }
+
+        .task-btns {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+        }
+
+        @media (max-width: 576px) {
+            .task {
+                padding-bottom: 40px; /* Increase padding to accommodate buttons */
+            }
+
+            .task-content {
+                margin-bottom: 0;
+            }
+
+            .task-btns {
+                position: absolute;
+                bottom: 5px;
+                left: 10px;
+                right: 10px;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .task-btns button {
+                flex: 1;
+                margin: 0 2px;
+            }
+        }
+        
+        .task-columns {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .task-column {
+            flex: 1;
+            min-width: 0;
+        }
+
+        @media (min-width: 768px) {
+            .task-columns {
+                flex-direction: row;
+            }
+        }
+
         .filter-container {
             margin-bottom: 20px;
         }
@@ -112,258 +234,85 @@ if (!empty($tasks)) {
             right: 5px;
         }
 
-        /* Modal background color for visibility */
         .modal-content {
             background-color: #f8f9fa;
             color: black;
         }
 
-        .logout-btn {
-            margin-top: 20px;
+        @media (max-width: 767px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .sidebar:hover {
+                width: 100%;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar-content {
+                opacity: 1;
+            }
+
+            .sidebar-item span {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
-        * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* reset button */
-button {
-    appearance: none;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    outline: none;
-    padding: 0;
-    margin: 0;
-    font-family: inherit;
-    font-size: inherit;
-    color: inherit;
-    text-decoration: none;
-    text-transform: none;
-    line-height: normal;
-    overflow: visible;
-}
-
-body {
-    min-height: 100svh;
-    background-color: rgb(15, 23, 42);
-    color: white;
-    display: grid;
-    place-content: center;
-    font-size: 1rem;
-    font-family: system-ui;
-}
-
-nav {
-    --_clr-txt: rgb(255, 255, 255);
-    --_clr-txt-svg: rgb(147, 158, 184);
-    --_ani-speed: 6s; /* speed of rotating text */
-    display: flex;
-    gap: 1rem;
-    font-size: 1.4rem;
-}
-
-nav > button {
-    position: relative;
-    display: grid;
-    place-content: center;
-    grid-template-areas: 'stack';
-    padding: 0 1.5rem;
-    text-transform: uppercase;
-    font-weight: 300;
-}
-
-/* place button items on top of each other */
-nav > button > span {
-    transition: all 300ms ease-in-out;
-    grid-area: stack;
-}
-
-/* nav icon */
-nav > button > span:last-of-type {
-    margin-top: 0.25rem;
-    transform: scale(0);
-    transition-delay: 0ms;
-    border-radius: 50%;
-}
-
-/* hover - hide text */
-nav > button:focus-visible > span:first-of-type,
-nav > button:hover > span:first-of-type {
-    transform: scale(0);
-}
-
-/* hover - reveal icon */
-nav > button:focus-visible > span:last-of-type,
-nav > button:hover > span:last-of-type {
-    transform: scale(1);
-}
-
-/* nav SVG circular text */
-nav > button > svg {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    transform-origin: center;
-    opacity: 0;
-    text-transform: uppercase;
-    transition: all 300ms ease-in-out;
-    color: var(--_clr-txt-svg);
-}
-
-/* hover - reveal rotating SVG */
-nav > button:focus-visible > svg,
-nav > button:hover > svg {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-    transition-delay: 150ms;
-}
-
-/* rotating SVG text */
-button svg g {
-    transform-origin: center;
-    animation: rotate var(--_ani-speed) linear infinite;
-}
-
-@keyframes rotate {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
     </style>
 </head>
 <body>
-
-    <div class="container mt-5">
-        <h1 class="text-center">Welcome to Your To-Do List</h1>
-
-        <nav class="d-flex justify-content-center">
-        <button type="button" class="nav-button btn btn-transparent" title="Profile">
-            <span>Profile</span>
-            <span class="material-symbols-outlined" aria-hidden="true"></span>
-            <svg viewBox="0 0 300 300" aria-hidden="true">
-                <g>
-                    <text fill="currentColor">
-                        <textPath xlink:href="#circlePath">Profile</textPath>
-                    </text>
-                    <text fill="currentColor">
-                        <textPath xlink:href="#circlePath" startOffset="50%">Profile</textPath>
-                    </text>
-                </g>
-            </svg>
-        </button>
-        <button type="button" class="nav-button btn btn-transparent" title="Log Out">
-            <span>Log Out</span>
-            <span class="material-symbols-outlined" aria-hidden="true"></span>
-            <svg viewBox="0 0 300 300" aria-hidden="true">
-                <g>
-                    <text fill="currentColor">
-                        <textPath xlink:href="#circlePath">Log Out</textPath>
-                    </text>
-                    <text fill="currentColor">
-                        <textPath xlink:href="#circlePath" startOffset="50%">Log Out</textPath>
-                    </text>
-                </g>
-            </svg>
-        </button>
-    </nav>
-
-    <!-- SVG template with dynamic text -->
-    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 300" width="0" height="0">
-        <defs>
-            <path id="circlePath" d="M 150, 150 m -50, 0 a 50,50 0 0,1 100,0 a 50,50 0 0,1 -100,0" />
-        </defs>
-    </svg>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-
-        <!-- Task Search and Filter Section -->
-        <div class="row filter-container mb-4">
-            <!-- Task Search Bar -->
-            <div class="col-md-6">
-                <input type="text" id="taskSearch" class="form-control" placeholder="Search tasks..." onkeyup="searchTasks()">
-            </div>
-
-            <!-- Task Status Filter -->
-            <div class="col-md-6 text-end">
-                <select id="statusFilter" class="form-select w-50 d-inline-block" onchange="filterTasks()">
-                    <option value="">All Tasks</option>
-                    <option value="pending">Pending</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                </select>
+    <div class="sidebar">
+        <div class="sidebar-content">
+            <div class="sidebar-top">
+                <h3 class="text-center mb-4">Menu</h3>
+                <a href="views/profile.php" class="sidebar-item"><i class="material-icons">person</i><span>Profile</span></a>
+                <a href="#" class="sidebar-item" data-bs-toggle="modal" data-bs-target="#addTaskModal"><i class="material-icons">add</i><span>Add Task</span></a>
             </div>
         </div>
-
-        <!-- Add Task Form -->
-        <div class="row">
-            <div class="col-md-4">
-                <h3 class="text-center">Add a Task</h3>
-                <form id="taskForm" method="POST" action="actions/add_task.php">
-                    <div class="form-group mb-2">
-                        <label for="taskTitle">Title</label>
-                        <input type="text" class="form-control" id="taskTitle" name="taskTitle" required>
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="dueDate">Due Date (dd/mm/yyyy)</label>
-                        <input type="date" class="form-control" id="dueDate" name="dueDate" required>
-                    </div>
-
-                    <!-- Card Color Picker -->
-                    <div class="form-group mb-2">
-                        <label for="taskColor">Card Color</label>
-                        <input type="color" class="form-control" id="taskColor" name="card_color" value="#ffffff">
-                    </div>
-
-                    <!-- Dropdown for task status -->
-                    <div class="form-group mb-2">
-                        <label for="taskStatus">Task Status</label>
-                        <select id="taskStatus" name="status" class="form-control" required>
-                            <option value="pending">Pending</option>
-                            <option value="in_progress">In Progress</option>
-                            <option value="completed">Completed</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Add Task</button>
-                </form>
-            </div>
+        <div class="sidebar-bottom">
+            <a href="/logout.php" class="sidebar-item"><i class="material-icons">exit_to_app</i><span>Logout</span></a>
         </div>
+    </div>
 
-        <!-- Task Columns -->
-        <div class="row mt-5">
-            <!-- Pending Tasks Column -->
-            <div class="col-md-4">
-                <h3 class="text-center">Pending</h3>
-                <div class="task-container" id="pending" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <?php if (!empty($pendingTasks)): ?>
+<div class="main-content">
+    <h1 class="text-center mb-4">Welcome to Your To-Do List</h1>
+
+    <div class="row filter-container mb-4">
+        <div class="col-md-6">
+            <input type="text" id="taskSearch" class="form-control" placeholder="Search tasks..." onkeyup="searchTasks()">
+        </div>
+        <div class="col-md-6 text-end">
+            <select id="statusFilter" class="form-select w-50 d-inline-block" onchange="filterTasks()">
+                <option value="">All Tasks</option>
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="task-columns">
+        <div class="task-column">
+            <h3 class="text-center">Pending</h3>
+            <div class="task-container" id="pending" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <?php if (!empty($pendingTasks)): ?>
                         <?php foreach ($pendingTasks as $task): ?>
-                            <div class="task task-item" id="task-<?= $task[
-                            	"id"
-                            ] ?>" draggable="true" ondragstart="drag(event)" 
-                                style="background-color: <?= htmlspecialchars(
-                                	$task["card_color"] ?? "#ffffff"
-                                ) ?>;" data-status="<?= $task["status"] ?>">
-                                <strong><?= htmlspecialchars(
-                                	$task["title"]
-                                ) ?></strong><br>
+                            <div class="task task-item" id="task-<?= $task["id"] ?>" draggable="true" ondragstart="drag(event)" 
+                                style="background-color: <?= htmlspecialchars($task["card_color"] ?? "#ffffff") ?>;" data-status="<?= $task["status"] ?>">
+                                <strong><?= htmlspecialchars($task["title"]) ?></strong><br>
                                 Due: <?= htmlspecialchars($task["due_date"]) ?>
                                 <div class="task-btns">
-                                    <button class="btn btn-sm btn-warning" onclick="editTask(<?= $task[
-                                    	"id"
-                                    ] ?>)">Edit</button>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteTask(<?= $task[
-                                    	"id"
-                                    ] ?>)">Delete</button>
+                                    <button class="btn btn-sm btn-warning" onclick="editTask(<?= $task["id"] ?>)">Edit</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteTask(<?= $task["id"] ?>)">Delete</button>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -373,29 +322,19 @@ button svg g {
                 </div>
             </div>
 
-            <!-- In Progress Tasks Column -->
-            <div class="col-md-4">
-                <h3 class="text-center">In Progress</h3>
-                <div class="task-container" id="in_progress" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <?php if (!empty($inProgressTasks)): ?>
+
+        <div class="task-column">
+            <h3 class="text-center">In Progress</h3>
+            <div class="task-container" id="in_progress" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <?php if (!empty($inProgressTasks)): ?>
                         <?php foreach ($inProgressTasks as $task): ?>
-                            <div class="task task-item" id="task-<?= $task[
-                            	"id"
-                            ] ?>" draggable="true" ondragstart="drag(event)" 
-                                style="background-color: <?= htmlspecialchars(
-                                	$task["card_color"] ?? "#ffffff"
-                                ) ?>;" data-status="<?= $task["status"] ?>">
-                                <strong><?= htmlspecialchars(
-                                	$task["title"]
-                                ) ?></strong><br>
+                            <div class="task task-item" id="task-<?= $task["id"] ?>" draggable="true" ondragstart="drag(event)" 
+                                style="background-color: <?= htmlspecialchars($task["card_color"] ?? "#ffffff") ?>;" data-status="<?= $task["status"] ?>">
+                                <strong><?= htmlspecialchars($task["title"]) ?></strong><br>
                                 Due: <?= htmlspecialchars($task["due_date"]) ?>
                                 <div class="task-btns">
-                                    <button class="btn btn-sm btn-warning" onclick="editTask(<?= $task[
-                                    	"id"
-                                    ] ?>)">Edit</button>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteTask(<?= $task[
-                                    	"id"
-                                    ] ?>)">Delete</button>
+                                    <button class="btn btn-sm btn-warning" onclick="editTask(<?= $task["id"] ?>)">Edit</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteTask(<?= $task["id"] ?>)">Delete</button>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -405,29 +344,18 @@ button svg g {
                 </div>
             </div>
 
-            <!-- Completed Tasks Column -->
-            <div class="col-md-4">
-                <h3 class="text-center">Completed</h3>
-                <div class="task-container" id="completed" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <?php if (!empty($completedTasks)): ?>
+        <div class="task-column">
+            <h3 class="text-center">Completed</h3>
+            <div class="task-container" id="completed" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <?php if (!empty($completedTasks)): ?>
                         <?php foreach ($completedTasks as $task): ?>
-                            <div class="task task-item" id="task-<?= $task[
-                            	"id"
-                            ] ?>" draggable="true" ondragstart="drag(event)" 
-                                style="background-color: <?= htmlspecialchars(
-                                	$task["card_color"] ?? "#ffffff"
-                                ) ?>;" data-status="<?= $task["status"] ?>">
-                                <strong><?= htmlspecialchars(
-                                	$task["title"]
-                                ) ?></strong><br>
+                            <div class="task task-item" id="task-<?= $task["id"] ?>" draggable="true" ondragstart="drag(event)" 
+                                style="background-color: <?= htmlspecialchars($task["card_color"] ?? "#ffffff") ?>;" data-status="<?= $task["status"] ?>">
+                                <strong><?= htmlspecialchars($task["title"]) ?></strong><br>
                                 Due: <?= htmlspecialchars($task["due_date"]) ?>
                                 <div class="task-btns">
-                                    <button class="btn btn-sm btn-warning" onclick="editTask(<?= $task[
-                                    	"id"
-                                    ] ?>)">Edit</button>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteTask(<?= $task[
-                                    	"id"
-                                    ] ?>)">Delete</button>
+                                    <button class="btn btn-sm btn-warning" onclick="editTask(<?= $task["id"] ?>)">Edit</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteTask(<?= $task["id"] ?>)">Delete</button>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -439,131 +367,91 @@ button svg g {
         </div>
     </div>
 
-    <!-- Modal for viewing task details -->
-    <div class="modal fade" id="taskDetailsModal" tabindex="-1" aria-labelledby="taskDetailsModalLabel" aria-hidden="true">
+    <!-- Add Task Modal -->
+    <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="taskDetailsModalLabel">Task Details</h5>
+                    <h5 class="modal-title" id="addTaskModalLabel">Add a Task</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Task details will be loaded here via AJAX -->
-                    <div id="taskDetailsContent"></div>
-                    <!-- Edit/Delete buttons in the modal -->
-                    <div class="text-end mt-3">
-                        <button class="btn btn-sm btn-warning" id="editModalBtn">Edit</button>
-                        <button class="btn btn-sm btn-danger" id="deleteModalBtn">Delete</button>
-                    </div>
+                    <form id="taskForm" method="POST" action="actions/add_task.php">
+                        <div class="mb-3">
+                            <label for="taskTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="taskTitle" name="taskTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dueDate" class="form-label">Due Date</label>
+                            <input type="date" class="form-control" id="dueDate" name="dueDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskColor" class="form-label">Card Color</label>
+                            <input type="color" class="form-control" id="taskColor" name="card_color" value="#ffffff">
+                        </div>
+                        <div class="mb-3">
+                            <label for="taskStatus" class="form-label">Task Status</label>
+                            <select id="taskStatus" name="status" class="form-select" required>
+                                <option value="pending">Pending</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Task</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Handle drag and drop functionality
-        function allowDrop(event) {
-            event.preventDefault();
-        }
 
-        function drag(event) {
-            event.dataTransfer.setData("text", event.target.id);
-        }
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function allowDrop(event) {
+        event.preventDefault();
+    }
 
-        function drop(event) {
-            event.preventDefault();
-            const taskId = event.dataTransfer.getData("text");
-            const targetStatus = event.target.id;
+    function drag(event) {
+        event.dataTransfer.setData("text", event.target.id);
+    }
 
-            // Send an AJAX request to update the task status in the database
-            updateTaskStatus(taskId.replace('task-', ''), targetStatus);
-        }
+    function drop(event) {
+        event.preventDefault();
+        const taskId = event.dataTransfer.getData("text");
+        const targetStatus = event.target.id;
 
-        function updateTaskStatus(taskId, newStatus) {
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "actions/update_task_status.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    window.location.reload();
-                }
-            };
-            xhr.send(`task_id=${taskId}&new_status=${newStatus}`);
-        }
+        updateTaskStatus(taskId.replace('task-', ''), targetStatus);
+    }
 
-        // Task Search Functionality
-        function searchTasks() {
-            const searchTerm = document.getElementById('taskSearch').value.toLowerCase();
-            const tasks = document.querySelectorAll('.task-item');
-            
-            tasks.forEach(task => {
-                const taskTitle = task.querySelector('strong').textContent.toLowerCase();
-                if (taskTitle.includes(searchTerm)) {
-                    task.style.display = 'block';
-                } else {
-                    task.style.display = 'none';
-                }
-            });
-        }
-
-        // Task Filter Functionality
-        function filterTasks() {
-            const selectedStatus = document.getElementById('statusFilter').value;
-            const tasks = document.querySelectorAll('.task-item');
-            
-            tasks.forEach(task => {
-                const taskStatus = task.getAttribute('data-status');
-                if (selectedStatus === '' || taskStatus === selectedStatus) {
-                    task.style.display = 'block';
-                } else {
-                    task.style.display = 'none';
-                }
-            });
-        }
-
-        // View task details
-        function viewTaskDetails(taskId) {
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", `actions/get_task_details.php?task_id=${taskId}`, true);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    document.getElementById('taskDetailsContent').innerHTML = xhr.responseText;
-
-                    // Set up edit and delete buttons in modal
-                    document.getElementById('editModalBtn').onclick = function() {
-                        editTask(taskId);
-                    };
-                    document.getElementById('deleteModalBtn').onclick = function() {
-                        deleteTask(taskId);
-                    };
-
-                    const modal = new bootstrap.Modal(document.getElementById('taskDetailsModal'));
-                    modal.show();
-                }
-            };
-            xhr.send();
-        }
-
-        // Edit task
-        function editTask(taskId) {
-            window.location.href = `edit_task.php?task_id=${taskId}`;
-        }
-
-        // Delete task
-        function deleteTask(taskId) {
-            if (confirm("Are you sure you want to delete this task?")) {
-                const xhr = new XMLHttpRequest();
-                xhr.open("POST", "actions/delete_task.php", true);
-                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        window.location.reload();
-                    }
-                };
-                xhr.send(`task_id=${taskId}`);
+    function updateTaskStatus(taskId, newStatus) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "actions/update_task_status.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                window.location.reload();
             }
-        }
-    </script>
+        };
+        xhr.send(`task_id=${taskId}&new_status=${newStatus}`);
+    }
+
+    function searchTasks() {
+        const searchTerm = document.getElementById('taskSearch').value.toLowerCase();
+        const tasks = document.querySelectorAll('.task-item');
+        tasks.forEach(task => {
+            const taskTitle = task.querySelector('strong').textContent.toLowerCase();
+            task.style.display = taskTitle.includes(searchTerm) ? 'block' : 'none';
+        });
+    }
+
+    function filterTasks() {
+        const selectedStatus = document.getElementById('statusFilter').value;
+        const tasks = document.querySelectorAll('.task-item');
+        tasks.forEach(task => {
+            const taskStatus = task.getAttribute('data-status');
+            task.style.display = (selectedStatus === '' || taskStatus === selectedStatus) ? 'block' : 'none';
+        });
+    }
+</script>
 </body>
 </html>
