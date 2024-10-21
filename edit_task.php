@@ -57,7 +57,9 @@ $labels = $labelStmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 body {
-    background-color: #1a1a1a;
+    font-size: 1rem;
+    font-family: system-ui;
+    background-color: rgb(15, 23, 42);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -68,7 +70,7 @@ body {
 }
 
 .contact-container {
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.2);
@@ -87,18 +89,19 @@ body {
     font-weight: bold;
     margin-bottom: 25px;
     text-align: center;
-    color: #1a1a1a;
+    color: white;
 }
 
 .form-group {
     margin-bottom: 20px;
+    
 }
 
 .form-group label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
-    color: #333;
+    color: white;
 }
 
 .form-control {
@@ -106,9 +109,9 @@ body {
     padding: 12px 20px;
     font-size: 16px;
     width: 100%;
-    border: 2px solid #e0e0e0;
+    border: 2px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
-    background-color: #f8f8f8;
+    background-color: #ffffff;
     color: #333;
 }
 
@@ -120,7 +123,7 @@ body {
 }
 
 .btn-submit {
-    background-color: #333;
+    background-color: rgba(255, 255, 255, 0.1);
     border: none;
     padding: 12px 24px;
     color: white;
