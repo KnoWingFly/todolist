@@ -122,6 +122,7 @@
 <body>
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <div class="body">
     <div class="veen">
@@ -171,7 +172,24 @@
         </div>
     </div>
 </div>
-<!-- JavaScript for form toggle -->
+
+<!-- Bootstrap Modal for Error -->
+<div id="errorModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Login Error</h5>
+      </div>
+      <div class="modal-body">
+        <p>Invalid credentials, please try again.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     $(document).ready(function(){
         $(".veen .rgstr-btn button").click(function(){
@@ -186,7 +204,13 @@
             $(".veen .rgstr-btn button").removeClass('active');
             $(this).addClass('active');
         });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('error')) {
+            $('#errorModal').modal('show');
+        }
     });
 </script>
+
 </body>
 </html>
