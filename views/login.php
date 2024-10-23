@@ -117,6 +117,37 @@
         .veen > .wrapper.move input:focus {
             border-color: #e0b722;
         }
+
+        .password-requirements {
+            display: none; /* Hide by default */
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 90%; /* Adjust to match the input width */
+            left: 5%; /* Center below the input */
+            margin-top: 5px; /* Space between input and requirements */
+        }
+
+        .password-requirements.active {
+            display: block; /* Show when active */
+        }
+
+        .requirement-met {
+            color: green;
+        }
+
+        .requirement-not-met {
+            color: red;
+        }
+
+        .btn-disabled {
+            cursor: not-allowed !important;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -136,8 +167,8 @@
         </div>
         <div class="wrapper">
             <!-- Login Form -->
-            <form id= "login" action="../actions/login_action.php" method="POST">
-            <h3>Login</h3>
+            <form id="login" action="../actions/login_action.php" method="POST">
+                <h3>Login</h3>
                 <div class="mail">
                     <input type="email" name="email" required>
                     <label>Email</label>
@@ -149,7 +180,11 @@
                 <div class="submit">
                     <button type="submit" class="dark">Login</button>
                 </div>
+                <div>
+                    <a href="forgot_password.php" class="text-primary">Forgot Password?</a>
+                </div>
             </form>
+
             <!-- Register Form -->
             <form id="register" action="../actions/register_action.php" method="POST">
                 <h3>Register</h3>
@@ -161,12 +196,21 @@
                     <input type="email" name="email" required>
                     <label>Email</label>
                 </div>
-                <div class="passwd">
-                    <input type="password" name="password" required>
+                <div class="passwd relative">
+                    <input type="password" name="password" id="password" required class="input input-bordered">
                     <label>Password</label>
+                    <div id="password-popup" class="password-requirements bg-info">
+                        <ul id="password-requirements-list" class="list-disc list-inside">
+                            <li id="min-length" class="requirement-not-met">At least 12 characters</li>
+                            <li id="uppercase" class="requirement-not-met">At least one uppercase letter</li>
+                            <li id="lowercase" class="requirement-not-met">At least one lowercase letter</li>
+                            <li id="number" class="requirement-not-met">At least one number</li>
+                            <li id="special-char" class="requirement-not-met">At least one special character</li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="submit">
-                    <button type="submit" class="dark">Register</button>
+                    <button type="submit" class="dark" disabled>Register</button>
                 </div>
             </form>
         </div>
@@ -175,19 +219,19 @@
 
 <!-- Bootstrap Modal for Error -->
 <div id="errorModal" class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Login Error</h5>
-      </div>
-      <div class="modal-body">
-        <p>Invalid credentials, please try again.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Login Error</h5>
+            </div>
+            <div class="modal-body">
+                <p>Invalid credentials, please try again.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <script>
@@ -205,12 +249,33 @@
             $(this).addClass('active');
         });
 
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('error')) {
-            $('#errorModal').modal('show');
+        // Show password requirements on focus
+        $('#password').on('focus', function() {
+            $('#password-popup').addClass('active');
+        }).on('blur', function() {
+            $('#password-popup').removeClass('active');
+        }).on('input', function() {
+            validatePassword($(this).val());
+        });
+
+        function validatePassword(password) {
+            const minLength = password.length >= 12;
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasLowercase = /[a-z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+            $('#min-length').toggleClass('requirement-met', minLength).toggleClass('requirement-not-met', !minLength);
+            $('#uppercase').toggleClass('requirement-met', hasUppercase).toggleClass('requirement-not-met', !hasUppercase);
+            $('#lowercase').toggleClass('requirement-met', hasLowercase).toggleClass('requirement-not-met', !hasLowercase);
+            $('#number').toggleClass('requirement-met', hasNumber).toggleClass('requirement-not-met', !hasNumber);
+            $('#special-char').toggleClass('requirement-met', hasSpecialChar).toggleClass('requirement-not-met', !hasSpecialChar);
+
+            // Enable the submit button if all requirements are met
+            const allRequirementsMet = minLength && hasUppercase && hasLowercase && hasNumber && hasSpecialChar;
+            $('button[type="submit"]').prop('disabled', !allRequirementsMet);
         }
     });
 </script>
-
 </body>
 </html>

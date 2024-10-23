@@ -30,6 +30,8 @@ CREATE TABLE tasks (
     FOREIGN KEY (list_id) REFERENCES todo_lists(id) ON DELETE CASCADE -- Add FK constraint
 );
 
-ALTER TABLE tasks ADD COLUMN label_color VARCHAR(7) DEFAULT '#007bff';
-
 ALTER TABLE tasks ADD COLUMN card_color VARCHAR(7) DEFAULT '#ffffff';
+
+ALTER TABLE users
+ADD COLUMN reset_token VARCHAR(255) DEFAULT NULL,
+ADD COLUMN reset_token_expiry DATETIME DEFAULT NULL;
