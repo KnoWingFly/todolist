@@ -43,59 +43,163 @@ if (isset($_GET['token'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password</title>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.5/dist/full.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light background color */
+        }
+        .container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card {
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+        .btn-primary {
+            background-color: #007bff; /* Bootstrap primary color */
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker shade on hover */
+            border-color: #0056b3;
+        }
+        .password-requirements {
+            display: none; /* Hide by default */
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 90%; /* Adjust to match the input width */
+            left: 5%; /* Center below the input */
+            margin-top: 5px; /* Space between input and requirements */
+        }
+
+        .password-requirements.active {
+            display: block; /* Show when active */
+        }
+
+        .requirement-met {
+            color: green;
+        }
+
+        .requirement-not-met {
+            color: red;
+        }
+
+        .match-password {
+            display: none; /* Hide by default */
+            color: green;
+            margin-top: 5px;
+        }
+
+        .not-match-password {
+            display: none; /* Hide by default */
+            color: red;
+            margin-top: 5px;
+        }
+    </style>
 </head>
-<body class="bg-base-300 min-h-screen flex items-center justify-center">
+<body>
 
-<div class="card w-96 bg-base-100 shadow-xl">
-    <div class="card-body">
-        <h2 class="card-title justify-center mb-4">Reset Password</h2>
+<div class="container">
+    <div class="card w-50">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-4">Reset Password</h2>
 
-        <?php if ($error): ?>
-            <div class="alert alert-error shadow-lg mb-4">
-                <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span><?= $error ?></span>
+            <?php if ($error): ?>
+                <div class="alert alert-danger">
+                    <strong>Error!</strong> <?= $error ?>
                 </div>
-            </div>
-        <?php elseif ($success): ?>
-            <div class="alert alert-success shadow-lg mb-4">
-                <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span><?= $success ?></span>
+            <?php elseif ($success): ?>
+                <div class="alert alert-success">
+                    <strong>Success!</strong> <?= $success ?>
                 </div>
-            </div>
-        <?php else: ?>
-            <form action="" method="post">
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text">New Password</span>
-                    </label>
-                    <input type="password" name="password" required autocomplete="off" class="input input-bordered">
-                </div>
-                <div class="form-control mt-4">
-                    <label class="label">
-                        <span class="label-text">Confirm New Password</span>
-                    </label>
-                    <input type="password" name="confirm_password" required autocomplete="off" class="input input-bordered">
-                </div>
-                <div class="form-control mt-6">
-                    <button type="submit" class="btn btn-primary">Reset Password</button>
-                </div>
-            </form>
-        <?php endif; ?>
+            <?php else: ?>
+                <form action="" method="post">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">New Password</label>
+                        <input type="password" name="password" id="password" required autocomplete="off" class="form-control">
+                        <div id="password-popup" class="password-requirements bg-info">
+                            <ul id="password-requirements-list" class="list-disc list-inside">
+                                <li id="min-length" class="requirement-not-met">At least 12 characters</li>
+                                <li id="uppercase" class="requirement-not-met">At least one uppercase letter</li>
+                                <li id="lowercase" class="requirement-not-met">At least one lowercase letter</li>
+                                <li id="number" class="requirement-not-met">At least one number</li>
+                                <li id="special-char" class="requirement-not-met">At least one special character</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirm New Password</label>
+                        <input type="password" name="confirm_password" id="confirm_password" required autocomplete="off" class="form-control">
+                        <div id="confirm-password-message" class="match-password">Passwords match!</div>
+                        <div id="confirm-password-message-not" class="not-match-password">Passwords do not match.</div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Reset Password</button>
+                    </div>
+                </form>
+            <?php endif; ?>
+        </div>
     </div>
 </div>
 
+<script>
+    $(document).ready(function() {
+        // Show password requirements on focus
+        $('#password').on('focus', function() {
+            $('#password-popup').addClass('active');
+        }).on('blur', function() {
+            $('#password-popup').removeClass('active');
+        }).on('input', function() {
+            validatePassword($(this).val());
+        });
+
+        $('#confirm_password').on('input', function() {
+            checkConfirmPassword($(this).val(), $('#password').val());
+        });
+
+        function validatePassword(password) {
+            const minLength = password.length >= 12;
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasLowercase = /[a-z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+            $('#min-length').toggleClass('requirement-met', minLength).toggleClass('requirement-not-met', !minLength);
+            $('#uppercase').toggleClass('requirement-met', hasUppercase).toggleClass('requirement-not-met', !hasUppercase);
+            $('#lowercase').toggleClass('requirement-met', hasLowercase).toggleClass('requirement-not-met', !hasLowercase);
+            $('#number').toggleClass('requirement-met', hasNumber).toggleClass('requirement-not-met', !hasNumber);
+            $('#special-char').toggleClass('requirement-met', hasSpecialChar).toggleClass('requirement-not-met', !hasSpecialChar);
+
+            // Enable the submit button if all requirements are met
+            const allRequirementsMet = minLength && hasUppercase && hasLowercase && hasNumber && hasSpecialChar;
+            $('button[type="submit"]').prop('disabled', !allRequirementsMet);
+        }
+
+        function checkConfirmPassword(confirmPassword, newPassword) {
+            if (confirmPassword === newPassword && confirmPassword !== '') {
+                $('#confirm-password-message').show();
+                $('#confirm-password-message-not').hide();
+            } else {
+                $('#confirm-password-message').hide();
+                $('#confirm-password-message-not').show();
+            }
+        }
+    });
+</script>
 </body>
 </html>
