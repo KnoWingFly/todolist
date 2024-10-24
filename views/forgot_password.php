@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         );
         $stmt->execute([$token, $email]);
 
-        $reset_link = "http://localhost:8000/views/reset_password.php?token=" . $token;
+        $reset_link = "http://kelompok3hl.aur-auran.my.id/views/reset_password.php?token=" . $token;
 
         $mail = new PHPMailer(true);
 
@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $mail->Host = "smtp.gmail.com";
             $mail->SMTPAuth = true;
             $mail->Username = "unknownowl26@gmail.com";
-            $mail->Password = "dbst pvbk dasu xmmb"; // Consider using environment variables for sensitive data
+            $mail->Password = "dbst pvbk dasu xmmb"; 
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 
