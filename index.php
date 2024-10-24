@@ -169,7 +169,7 @@ if (!empty($tasks)) {
         .task {
             padding: 20px 10px 10px; 
             margin: 5px 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 254, 0.1);
             border-radius: 4px;
             cursor: pointer;
             position: relative;
