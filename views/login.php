@@ -195,10 +195,10 @@
                     <input type="email" name="email" required>
                     <label>Email</label>
                 </div>
-                <div class="passwd relative">
-                    <input type="password" name="password" id="password" required class="input input-bordered">
-                    <label>Password</label>
-                    <div id="password-popup" class="password-requirements bg-info">
+                <div class="mb-4">
+                    <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <input type="password" name="password" id="password" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <div id="password-popup" class="password-requirements bg-blue-100 mt-2 p-2 rounded-lg hidden">
                         <ul id="password-requirements-list" class="list-disc list-inside">
                             <li id="min-length" class="requirement-not-met">At least 12 characters</li>
                             <li id="uppercase" class="requirement-not-met">At least one uppercase letter</li>
