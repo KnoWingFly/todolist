@@ -12,6 +12,14 @@ $stmt = $pdo->prepare("SELECT username, email FROM users WHERE id = :user_id");
 $stmt->execute(["user_id" => $user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+function isValidPassword($password) {
+    return preg_match('/[A-Z]/', $password) &&     
+           preg_match('/[a-z]/', $password) &&  
+           preg_match('/\d/', $password) &&     
+           preg_match('/[^A-Za-z0-9]/', $password) && 
+           strlen($password) >= 12;                
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $username = $_POST["username"];
     $email = $_POST["email"];
@@ -57,6 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" />
+     <link href="../css/output.css" rel="stylesheet">
 	<style>
 @import url('https://fonts.googleapis.com/css?family=Nunito:400,900|Montserrat|Roboto');
  body {
@@ -72,6 +81,52 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     margin-top: 10%;
     box-shadow: 2px 5px 20px rgba(119, 119, 119, .5);
     padding-right: 250px;
+}
+
+.popup {
+display: none;
+position: absolute;
+top: 100%;
+left: 0;
+z-index: 50;
+width: 100%;
+padding: 1rem;
+border-radius: 0.5rem;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+background-color: white;
+}
+
+.popup.active {
+display: block;
+}
+
+#password-requirements-list {
+list-style: none;
+padding: 0;
+margin: 0;
+}
+
+#password-requirements-list li {
+margin: 5px 0;
+padding-left: 25px;
+position: relative;
+transition: color 0.3s ease;
+}
+
+#password-requirements-list li::before {
+content: '✕';
+position: absolute;
+left: 0;
+color: red;
+}
+
+#password-requirements-list li.valid {
+color: #2ecc71;
+}
+
+#password-requirements-list li.valid::before {
+    content: '✓';
+    color: #2ecc71;
 }
 
 .logo {
@@ -299,13 +354,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 </head>
 <body class="bg-light">
-
 <div class="container">
   <div id="logo"><h1 class="logo">TODOLIST</h1>
   <a href="../index.php" class="CTA dashboard-link">
   <h1>Dashboard</h1>
 </a>
-
   </div>
   <div class="leftbox">
   </div>
@@ -324,22 +377,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
 
         <div class="mb-3">
-          <label for="password" class="form-label">New Password <small>(Leave empty to keep current password)</small></label>
-          <input type="password" class="form-control" id="password" name="password">
-        </div>
-        
+                <label for="password" class="form-label">New Password</label>
+                <input type="password" name="password" id="password" class="form-control">
+                <div id="password-popup" class="popup bg-base-100">
+                    <ul id="password-requirements-list" class="list-disc list-inside">
+                        <li id="min-length" class="requirement-not-met">At least 12 characters</li>
+                        <li id="uppercase" class="requirement-not-met">At least one uppercase letter</li>
+                        <li id="lowercase" class="requirement-not-met">At least one lowercase letter</li>
+                        <li id="number" class="requirement-not-met">At least one number</li>
+                        <li id="special-char" class="requirement-not-met">At least one special character</li>
+                    </ul>
+                </div>
+            </div>
         <button type="submit" class="btn btn-primary w-100">Save Changes</button>
       </form>
     </div>
   </div>
   </div>
-    
   </div>
 </div>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+   document.addEventListener('DOMContentLoaded', () => {
         <?php if (isset($_SESSION['profile_updated']) && $_SESSION['profile_updated']): ?>
         Swal.fire({
             icon: 'success',
@@ -347,10 +407,65 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             text: 'Your profile has been updated successfully.',
             confirmButtonColor: '#333'
         }).then(() => {
-            // Clear the session variable to prevent it from showing again
             <?php unset($_SESSION['profile_updated']); ?>
         });
         <?php endif; ?>
+
+        const passwordInput = document.getElementById('password');
+        const popup = document.getElementById('password-popup');
+        const requirements = {
+            'min-length': {
+                regex: /.{12,}/,
+                element: document.getElementById('min-length')
+            },
+            'uppercase': {
+                regex: /[A-Z]/,
+                element: document.getElementById('uppercase')
+            },
+            'lowercase': {
+                regex: /[a-z]/,
+                element: document.getElementById('lowercase')
+            },
+            'number': {
+                regex: /[0-9]/,
+                element: document.getElementById('number')
+            },
+            'special-char': {
+                regex: /[^A-Za-z0-9]/,
+                element: document.getElementById('special-char')
+            }
+        };
+
+        passwordInput.addEventListener('focus', () => {
+            popup.style.display = 'block';
+        });
+
+        passwordInput.addEventListener('blur', (e) => {
+            setTimeout(() => {
+                if (!popup.matches(':hover')) {
+                    popup.style.display = 'none';
+                }
+            }, 100);
+        });
+
+        popup.addEventListener('mouseleave', () => {
+            if (!passwordInput.matches(':focus')) {
+                popup.style.display = 'none';
+            }
+        });
+
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            
+            for (const [key, requirement] of Object.entries(requirements)) {
+                const isValid = requirement.regex.test(password);
+                if (isValid) {
+                    requirement.element.classList.add('valid');
+                } else {
+                    requirement.element.classList.remove('valid');
+                }
+            }
+        });
     });
 </script>
 </body>
