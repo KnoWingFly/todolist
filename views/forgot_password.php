@@ -60,57 +60,94 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password</title>
-    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="../node_modules/jquery-ui-dist/jquery-ui.min.js"></script>
-    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
-        body {
-            background-color: #f8f9fa;
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;400;500;600;700;800;900&display=swap");
+
+        html, body { 
+            min-height: 100vh; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Poppins", sans-serif;
+            background-color: rgb(15, 23, 42);
         }
-        .card {
-            border-radius: 0.5rem;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+
+        .forgot_password {
+            min-height: 100px; 
+            align-items: center;
+            text-align: center;
+            padding: 30px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0px 0px 15px rgba(0,0,0,0.05);
         }
-        .form-label {
-            font-weight: 600;
+
+        .group {
+            margin: 20px 0px;
         }
-        .btn-primary {
-            background-color: #007bff;
+
+        .group input {
+            border: 0;
+            outline: none;
+            font-size: 13px;
+            padding: 0 10px;
+            border-bottom: 1px solid #aaa;
+            transition: 0.5s;
+        }
+
+        .group input:hover {
+            border-bottom: 1px solid #000;
+        }
+
+        .group button {
+            width: 100%; 
+            height: 45px;
+            outline: none;
             border: none;
+            background-color: #000;
+            color: #fff;
+            font-weight: 600;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: 0.5s;
         }
-        .btn-primary:hover {
+
+        .group button:hover {
             background-color: #0056b3;
+        }
+
+        .alert {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <div class="card" style="width: 24rem;">
-        <div class="card-body">
-            <h5 class="card-title text-center">Forgot Password</h5>
-            <p class="text-center text-muted">Enter your email address to reset your password.</p>
-            <form action="" method="post">
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input type="email" name="email" id="email" required autocomplete="off" class="form-control" placeholder="you@example.com">
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">Send Reset Link</button>
-            </form>
-
-            <?php if ($error): ?>
-                <div class="alert alert-danger mt-3">
-                    <strong>Error!</strong> <?= $error ?>
-                </div>
-            <?php elseif ($success): ?>
-                <div class="alert alert-success mt-3">
-                    <strong>Success!</strong> <?= $success ?>
-                </div>
-            <?php endif; ?>
+<div class="forgot_password">
+    <h5 class="card-title mb-4">Forgot Password</h5>
+    <p class="text-muted">Enter your email address to reset your password.</p>
+    <form action="" method="post" class="group">
+        <div class="mb-3">
+            <input type="email" name="email" id="email" required autocomplete="off" placeholder="you@example.com" class="form-control mx-auto" style="max-width: 280px;">
         </div>
-    </div>
+        <div class="text-center"> 
+            <button type="submit" class="btn btn-dark"><span>Send Reset Link</span></button>
+        </div>
+    </form>
+    
+    <?php if ($error): ?>
+        <div class="alert alert-danger">
+            <strong>Error!</strong> <?= $error ?>
+        </div>
+    <?php elseif ($success): ?>
+        <div class="alert alert-success">
+            <strong>Success!</strong> <?= $success ?>
+        </div>
+    <?php endif; ?>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
